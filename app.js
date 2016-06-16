@@ -499,6 +499,69 @@ var draftPlayers = {
     { name: 'Stanley Robinson', winSharesPerSeason: 0 },
     { name: 'Dwayne Collins', winSharesPerSeason: 0 },
   ],
+
+  2011: [
+    { name: 'Kyrie Irving', winSharesPerSeason: 6.279999999999999 },
+    { name: 'Derrick Williams', winSharesPerSeason: 2.6 },
+    { name: 'Enes Kanter', winSharesPerSeason: 4.14 },
+    { name: 'Tristan Thompson', winSharesPerSeason: 5.5200000000000005 },
+    { name: 'Jonas Valanciunas', winSharesPerSeason: 6.425 },
+    { name: 'Jan Vesely', winSharesPerSeason: 0.8 },
+    { name: 'Bismack Biyombo', winSharesPerSeason: 3.02 },
+    { name: 'Brandon Knight', winSharesPerSeason: 2.2600000000000002 },
+    { name: 'Kemba Walker', winSharesPerSeason: 4.9 },
+    { name: 'Jimmer Fredette', winSharesPerSeason: 0.48 },
+    { name: 'Klay Thompson', winSharesPerSeason: 5.9 },
+    { name: 'Alec Burks', winSharesPerSeason: 1.78 },
+    { name: 'Markieff Morris', winSharesPerSeason: 2.94 },
+    { name: 'Marcus Morris', winSharesPerSeason: 3.04 },
+    { name: 'Kawhi Leonard', winSharesPerSeason: 8.36 },
+    { name: 'Nikola Vucevic', winSharesPerSeason: 4.82 },
+    { name: 'Iman Shumpert', winSharesPerSeason: 1.92 },
+    { name: 'Chris Singleton', winSharesPerSeason: 0.45999999999999996 },
+    { name: 'Tobias Harris', winSharesPerSeason: 3.7600000000000002 },
+    { name: 'Donatas Motiejunas', winSharesPerSeason: 1.75 },
+    { name: 'Nolan Smith', winSharesPerSeason: -0.16 },
+    { name: 'Kenneth Faried', winSharesPerSeason: 6.0200000000000005 },
+    { name: 'Nikola Mirotic', winSharesPerSeason: 4.8 },
+    { name: 'Reggie Jackson', winSharesPerSeason: 3.88 },
+    { name: 'Marshon Brooks', winSharesPerSeason: 0.5 },
+    { name: 'Jordan Hamilton', winSharesPerSeason: 0.6 },
+    { name: 'JaJuan Johnson', winSharesPerSeason: 0.04 },
+    { name: 'Norris Cole', winSharesPerSeason: 0.62 },
+    { name: 'Cory Joseph', winSharesPerSeason: 2.3600000000000003 },
+    { name: 'Jimmy Butler', winSharesPerSeason: 7.1 },
+    { name: 'Bojan Bogdanovic', winSharesPerSeason: 1.65 },
+    { name: 'Justin Harper', winSharesPerSeason: 0 },
+    { name: 'Kyle Singler', winSharesPerSeason: 2.45 },
+    { name: 'Shelvin Mack', winSharesPerSeason: 1.22 },
+    { name: 'Tyler Honeycutt', winSharesPerSeason: 0 },
+    { name: 'Jordan Williams', winSharesPerSeason: 0 },
+    { name: 'Trey Thompkins', winSharesPerSeason: 0 },
+    { name: 'Chandler Parsons', winSharesPerSeason: 5.54 },
+    { name: 'Jeremy Tyler', winSharesPerSeason: 0.06 },
+    { name: 'Jon Leuer', winSharesPerSeason: 1.52 },
+    { name: 'Darius Morris', winSharesPerSeason: 0 },
+    { name: 'Davis Bertans', winSharesPerSeason: 0 },
+    { name: 'Malcolm Lee', winSharesPerSeason: 0 },
+    { name: 'Charles Jenkins', winSharesPerSeason: 0 },
+    { name: 'Josh Harrellson', winSharesPerSeason: 0 },
+    { name: 'Andrew Goudelock', winSharesPerSeason: 0 },
+    { name: 'Travis Leslie', winSharesPerSeason: 0 },
+    { name: 'Keith Benson', winSharesPerSeason: 0 },
+    { name: 'Josh Selby', winSharesPerSeason: 0 },
+    { name: 'Lavoy Allen', winSharesPerSeason: 0 },
+    { name: 'Jon Diebler', winSharesPerSeason: 0 },
+    { name: 'Vernon Macklin', winSharesPerSeason: 0 },
+    { name: 'DeAndre Liggins', winSharesPerSeason: 0 },
+    { name: 'Milan Macvan', winSharesPerSeason: 0 },
+    { name: 'Etwaun Moore', winSharesPerSeason: 0 },
+    { name: 'Chukwudiebere Maduabum', winSharesPerSeason: 0 },
+    { name: 'Tanguy Ngombo', winSharesPerSeason: 0 },
+    { name: 'Ater Majok', winSharesPerSeason: 0 },
+    { name: 'Adam Hanga', winSharesPerSeason: 0 },
+    { name: 'Isaiah Thomas', winSharesPerSeason: 6.58 },
+  ],
 };
 
 function average(arr) {
@@ -532,14 +595,16 @@ app.get('/win_shares_per_48/career/:player', function (req, res) {
 });
 
 app.get('/win_shares_per_season/:player', function (req, res) {
-  fs.readFile('data/' + req.params.player + '/advanced.csv', function (err, csv) {
-    if (err) {
+  fs.readFile('data/' + req.params.player + '/advanced.csv', function (readFileError, csv) {
+    if (readFileError) {
+      console.log('1: ', readFileError);
       res.send('0');
       return;
     }
 
-    parse(csv, function (err, advancedPlayerData) {
-      if (err) {
+    parse(csv, function (parseError, advancedPlayerData) {
+      if (parseError) {
+        console.log('2: ', parseError);
         res.send('0');
         return;
       }
@@ -563,8 +628,10 @@ app.get('/win_shares_per_season/:player', function (req, res) {
           winSharesPerSeason = 0;
         }
 
+        console.log('3: ', req.params.player);
         res.send(winSharesPerSeason.toString());
       } catch (e) {
+        console.log('4: ', e);
         res.send('0');
         return;
       }
